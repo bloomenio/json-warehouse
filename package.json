@@ -11,11 +11,7 @@
     "jwh": "./bin/jsonWarehouse"
   },
   "scripts": {
-    "start": "nps",
-    "test": "nps test",
-    "ws:ganache": "nps nohupGanache",
-    "go": "npm-run-all -p ws:*",
-    "truffle": "truffle"
+    "test": "nps test"
   },
   "author": "",
   "license": "ISC",
