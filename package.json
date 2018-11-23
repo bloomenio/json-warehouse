@@ -11,6 +11,7 @@
     "jwh": "./bin/jsonWarehouse"
   },
   "scripts": {
+    "start": "nps",
     "test": "nps test"
   },
   "author": "",
