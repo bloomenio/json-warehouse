@@ -38,7 +38,7 @@ Download it [here](https://nodejs.org/en/)
 ### Usage
 Now you can start storing data.
 ```console
-> jasonwarehouse --help
+> jsonwarehouse --help
        _______ ____  _   __   _       __                __
       / / ___// __ \/ | / /  | |     / /___ _________  / /_  ____  __  __________
  __  / /\__ \/ / / /  |/ /   | | /| / / __ `/ ___/ _ \/ __ \/ __ \/ / / / ___/ _ \
