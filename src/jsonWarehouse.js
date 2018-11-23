@@ -8,33 +8,34 @@ const utils = require('./contractUtilsJSON');
 const jsonPathLibrary = require('json-path-value');
 const jsonPath = new jsonPathLibrary.JsonPath();
 const prettyJson = require('prettyjson');
+const version = require('../package.json').version;
 
 const jsonPrintOptions = {
     noColor: false
 };
 
 async function newContainer() {
-    var files = fs.readdirSync('./src/json/');
-    var questions = [
+    let files = fs.readdirSync('./src/json/');
+    let questions = [
         { type: 'input', name: 'name', message: 'Give a name' },
         { type: 'list', name: 'folder', message: 'Select a data type', choices: files }
     ];
     console.log('Create a new JSON container.');
-    var answer = await inquirer.prompt(questions);
+    let answer = await inquirer.prompt(questions);
     files = fs.readdirSync('./src/json/' + answer.folder);
     questions = [
         { type: 'list', name: 'file', message: 'Select a file', choices: files }
     ];
-    var answerFile = await inquirer.prompt(questions);
-    var json = JSON.parse(fs.readFileSync('./src/json/' + answer.folder + '/' + answerFile.file, 'utf8'));
+    let answerFile = await inquirer.prompt(questions);
+    let json = JSON.parse(fs.readFileSync('./src/json/' + answer.folder + '/' + answerFile.file, 'utf8'));
     await utils().createContainer(json, answer.name);
     console.log(answer.name + ' container crated.');
 }
 
 async function getData() {
-    var containers = await utils().getContainers();
-    var containersMetadata = [];
-    var i;
+    let containers = await utils().getContainers();
+    let containersMetadata = [];
+    let i;
     for (i = 0; i < containers.length; i++) {
         containersMetadata.push({ name: containers[i].name, value: containers[i].add });
     }
@@ -42,18 +43,18 @@ async function getData() {
         console.log("There are no containers.");
         return;
     }
-    var questions = [
+    let questions = [
         { type: 'list', name: 'container', message: 'Choose a container', choices: containersMetadata }
     ];
     console.log('Get data from a container');
-    var answer = await inquirer.prompt(questions);
+    let answer = await inquirer.prompt(questions);
     console.log(prettyJson.render(jsonPath.unMarshall(await utils().get(answer.container)), jsonPrintOptions));
 }
 
 async function update() {
-    var containers = await utils().getContainers();
-    var containersMetadata = [];
-    var i;
+    let containers = await utils().getContainers();
+    let containersMetadata = [];
+    let i;
     for (i = 0; i < containers.length; i++) {
         containersMetadata.push({ name: containers[i].name, value: containers[i].add });
     }
@@ -61,23 +62,35 @@ async function update() {
         console.log("There are no containers.");
         return;
     }
-    var files = fs.readdirSync('./src/json/');
-    var questions = [
+    let files = fs.readdirSync('./src/json/');
+    let questions = [
         { type: 'list', name: 'container', message: 'Choose a container', choices: containersMetadata },
         { type: 'list', name: 'folder', message: 'Select a data type', choices: files }
     ];
     console.log('Update data of a JSON container');
-    var answer = await inquirer.prompt(questions);
+    let answer = await inquirer.prompt(questions);
     files = fs.readdirSync('./src/json/' + answer.folder);
     questions = [
         { type: 'list', name: 'file', message: 'Select a file', choices: files }
     ];
-    var answerFile = await inquirer.prompt(questions);
-    var json = JSON.parse(fs.readFileSync('./src/json/' + answer.folder + '/' + answerFile.file, 'utf8'));
+    let answerFile = await inquirer.prompt(questions);
+    let json = JSON.parse(fs.readFileSync('./src/json/' + answer.folder + '/' + answerFile.file, 'utf8'));
     await utils().updateContainer(json, answer.container);
     console.log('Result:\n' + prettyJson.render(jsonPath.unMarshall(await utils().get(answer.container)), jsonPrintOptions));
     console.log('Container updated.');
 }
+
+program
+    .version(version, '-v --version');
+
+program.on('--help', function () {
+    console.log('  Empty command triggers the menu.')
+    console.log('\nExamples:');
+    console.log('  $ jwh');
+    console.log('  $ jsonwarehouse nc');
+    console.log('  $ jwh get-data');
+    console.log('  $ jwh --version');
+});
 
 program
     .command('new-container')
@@ -101,7 +114,7 @@ program
     .action(update);
 
 figlet.text('JSON Warehouse', {
-    font: 'slant'
+    font: 'Slant'
 }, async function (err, data) {
     if (err) {
         console.log('Something went wrong...');
@@ -111,15 +124,15 @@ figlet.text('JSON Warehouse', {
     console.log(data);
     program.parse(process.argv);
     if (program.args.length == 0) {
-        var menuOptions = [
+        let menuOptions = [
             { name: "Create a new container", value: newContainer },
             { name: "Get data from a container", value: getData },
             { name: "Update container data", value: update }
         ];
-        var questions = [
+        let questions = [
             { type: "list", name: "menu", message: "What do you want to do?", choices: menuOptions }
         ];
-        var answer = await inquirer.prompt(questions);
+        let answer = await inquirer.prompt(questions);
         answer.menu();
     }
 });
