@@ -2,8 +2,8 @@
   "name": "json-warehouse",
   "version": "0.0.1-beta1",
   "description": "",
-  "directories": {
-    "test": "test"
+  "publishConfig": {
+    "access": "public"
   },
   "bin": {
     "jsonwarehouse": "./bin/jsonWarehouse",
