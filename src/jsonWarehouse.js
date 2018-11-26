@@ -29,7 +29,7 @@ async function newContainer() {
     let answerFile = await inquirer.prompt(questions);
     let json = JSON.parse(fs.readFileSync('./src/json/' + answer.folder + '/' + answerFile.file, 'utf8'));
     await utils().createContainer(json, answer.name);
-    console.log(answer.name + ' container crated.');
+    console.log(answer.name + ' container created.');
 }
 
 async function getData() {
