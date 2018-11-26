@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 pragma experimental ABIEncoderV2;
 
 import "./lib/Strings.sol";
@@ -21,7 +21,8 @@ contract JsonContainer is Structs {
   }
 
   function initialize(PathValue[] _data) public {
-    for (uint i = 0;i < _data.length; i++) {
+    uint dataLength = _data.length;
+    for (uint i = 0;i < dataLength; i++) {
       PathValue memory pathValue = _data[i];
       _addPath(pathValue.path, pathValue.value, pathValue.valueType);
     }
@@ -30,7 +31,8 @@ contract JsonContainer is Structs {
   function update(bytes memory _in) public {
     RLPReader.RLPItem memory item = _in.toRlpItem();
     RLPReader.RLPItem[] memory itemList = item.toList();
-    for (uint i = 0; i < itemList.length; i++) {
+    uint listLength = itemList.length;
+    for (uint i = 0; i < listLength; i++) {
       uint difference = itemList[i].toList()[3].toUint();
       if (difference == 0) { //addition
         _addPath(string(itemList[i].toList()[0].toBytes()), string(itemList[i].toList()[1].toBytes()), string(itemList[i].toList()[2].toBytes()));
@@ -46,7 +48,8 @@ contract JsonContainer is Structs {
     bytes32 pathHash = keccak256(bytes(_path));
     uint[] memory indexArray = hashIndexMap_[pathHash];
     if (indexArray.length > 0) {
-      for (uint i = 0; i < indexArray.length; i++) {
+      uint indexLength = indexArray.length;
+      for (uint i = 0; i < indexLength; i++) {
         string memory storedPath = data_[indexArray[i]].path;
         require(!storedPath.toSlice().equals(_path.toSlice()));
       }
@@ -67,7 +70,8 @@ contract JsonContainer is Structs {
     bytes32 pathHash = keccak256(bytes(_path));
     uint[] memory indexArray = hashIndexMap_[pathHash];
     require(indexArray.length > 0);
-    for (uint i = 0; i < indexArray.length; i++) {
+    uint indexLength = indexArray.length;
+    for (uint i = 0; i < indexLength; i++) {
       string memory storedPath = data_[indexArray[i]].path;
       if (storedPath.toSlice().equals(_path.toSlice())) {
         delete data_[indexArray[i]];
@@ -80,7 +84,8 @@ contract JsonContainer is Structs {
     bytes32 pathHash = keccak256(bytes(_path));
     uint[] memory indexArray = hashIndexMap_[pathHash];
     require(indexArray.length > 0);
-    for (uint i = 0; i < indexArray.length; i++) {
+    uint indexLength = indexArray.length;
+    for (uint i = 0; i < indexLength; i++) {
       string memory storedPath = data_[indexArray[i]].path;
       if (storedPath.toSlice().equals(_path.toSlice())) {
         data_[indexArray[i]] = PathValue(_path, _value, _valueType);

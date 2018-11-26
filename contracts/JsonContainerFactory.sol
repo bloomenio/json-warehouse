@@ -1,4 +1,4 @@
-pragma solidity ^0.4.24;
+pragma solidity 0.4.24;
 pragma experimental ABIEncoderV2;
 
 import "./lib/Structs.sol";
@@ -17,8 +17,9 @@ contract JsonContainerFactory is Structs {
         RLPReader.RLPItem memory item = _in.toRlpItem();
         RLPReader.RLPItem[] memory itemList = item.toList();
 
-        PathValue[] memory data = new PathValue[](itemList.length);
-        for (uint i = 0; i < itemList.length; i++) {
+        uint listLength = itemList.length;
+        PathValue[] memory data = new PathValue[](listLength);
+        for (uint i = 0; i < listLength; i++) {
             PathValue memory pathValue = PathValue(string(itemList[i].toList()[0].toBytes()), string(itemList[i].toList()[1].toBytes()), string(itemList[i].toList()[2].toBytes()));
             data[i] = pathValue;
         }
