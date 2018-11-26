@@ -13,8 +13,23 @@
     "start": "nps",
     "test": "nps test"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bloomenio/json-warehouse.git"
+  },
+  "keywords": [
+    "Json",
+    "Blockchain",
+    "Ethereum",
+    "Solidity",
+    "Storage"
+  ],
+  "author": "Worldline-spain",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bloomenio/json-warehouse/issues"
+  },
+  "homepage": "https://github.com/bloomenio/json-warehouse#readme",
   "dependencies": {
     "bip39": "^2.5.0",
     "commander": "^2.15.1",
