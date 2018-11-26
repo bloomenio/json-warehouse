@@ -55,7 +55,8 @@ contract JsonContainer is Structs {
       }
     }
     PathValue memory pathValue = PathValue(_path, _value, _valueType);
-    for (i = 0; i < data_.length; i++) {
+    uint dataLength = data_.length;
+    for (i = 0; i < dataLength; i++) {
       if (data_[i].path.toSlice().empty()) {
         data_[i] = pathValue;
         hashIndexMap_[pathHash].push(i);
