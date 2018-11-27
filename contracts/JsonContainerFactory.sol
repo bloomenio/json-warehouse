@@ -20,7 +20,11 @@ contract JsonContainerFactory is Structs {
         uint listLength = itemList.length;
         PathValue[] memory data = new PathValue[](listLength);
         for (uint i = 0; i < listLength; i++) {
-            PathValue memory pathValue = PathValue(string(itemList[i].toList()[0].toBytes()), string(itemList[i].toList()[1].toBytes()), string(itemList[i].toList()[2].toBytes()));
+            PathValue memory pathValue = PathValue(
+                string(itemList[i].toList()[0].toBytes()),
+                string(itemList[i].toList()[1].toBytes()),
+                string(itemList[i].toList()[2].toBytes())
+            );
             data[i] = pathValue;
         }
 
