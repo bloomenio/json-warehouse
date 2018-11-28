@@ -11,7 +11,8 @@
   },
   "scripts": {
     "start": "nps",
-    "test": "nps test"
+    "test": "nps test",
+    "jwh": "node src/jsonWarehouse.js"
   },
   "repository": {
     "type": "git",
