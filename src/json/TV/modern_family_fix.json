@@ -12,7 +12,10 @@
         "name": "Modern Family: Three Turkeys"
     },
     "inLanguage": "en",
-    "subtitleLanguage": "es",
+    "subtitleLanguage": [
+        "es",
+        "en"
+    ],
     "videoFormat": "HD",
     "isLiveBroadcast": "False",
     "name": "Modern Family - S6E8 - Three Turkeys",
