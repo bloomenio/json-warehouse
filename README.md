@@ -79,6 +79,7 @@ As we can see in the following example (extracted from the JSON PATH VALUE readm
 }
 ```
 the value _1_ of the attribute _c_ of the attribute _b_ can be expressed as _b.c = 1_, so the path is _b.c_ and the value is _1_. Furthermore, the type of the value is a number. Thus, putting this together, we can represent the JSON object this way:
+
 | PATH   |     VALUE      |  TYPE |
 |----------|:-------------:|------:| 
 | a |  "a"| string |
@@ -112,38 +113,42 @@ The advantage of storing JSON data this way is to be able to change a single att
 }
 ```
 if we want to change the name of the first composer from _John lennon_ to _John Lennon_ (in order to fix surname), we don't need to load the entire JSON file to the container; instead, JSON PATH VALUE will check the differences between the stored JSON and the new one, as shown in the following table:
+
 | PATH   |     VALUE      |  TYPE |  DIFF|
 |----------|:-------------:|------:| ----:|
 | composer[0].name |  "John Lennon"| string | Modified|
+
 so we only change that path-value tuple saving a lot of resources.
 ### Example of usage
 Once we have Json Warehouse ready, if we type **_jwh_**, the program shows us the menu:
 
-![menu](img/menu_1.jpg)
+![m1](img/menu_1.jpg)
 
 Let's select _Create a new container_. The program asks us to specify a name for the container and to select a JSON file to store within it.
 
-![menu](img/create_container_1.jpg)
+![cc1](img/create_container_1.jpg)
 
 Some JSON examples are included. If you want to add some custom data, just add the _.json_ file to the _json_ folder. In this example, we select _modern_family.json_.
 
-![menu](img/create_container_2.jpg)
+![cc2](img/create_container_2.jpg)
 
 Now we want to check the already stored data. Just select _Get data from a container_ at the menu and chose the desired existing container.
 
-![menu](img/get_data_1.jpg)
+![gd1](img/get_data_1.jpg)
 
 At this point, we want to change some data: the video format now is HD and let's add an additional subtitle language. So the changes, in JsonPath format, are:
+
 | PATH   |     VALUE      |  TYPE |  DIFF|
 |----------|:-------------:|------:| ----:|
 | videoFormat |  "HD"| string | Modified|
 | subtitleLanguage | "es" | string | Deleted |
 | subtitleLanguage[0] | "es" | string | Added |
 | subtitleLanguage[1] | "en" | string | Added |
+
 So let's update the container selecting _Update container data_:
 
-![menu](img/update_container_1.jpg)
+![uc1](img/update_container_1.jpg)
 
-![menu](img/update_container_2.jpg)
+![uc2](img/update_container_2.jpg)
 
 We can see that the container data has been correctly fixed.
