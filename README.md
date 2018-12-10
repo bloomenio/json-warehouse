@@ -122,27 +122,19 @@ so we only change that path-value tuple saving a lot of resources.
 ### Example of usage
 Once we have Json Warehouse ready, if we type **_jwh_**, the program shows us the menu:
 
-<p align="center">
- <img src="/img/menu_1.jpg">
-</p>
+![m1](img/menu_1.JPG)
 
 Let's select _Create a new container_. The program asks us to specify a name for the container and to select a JSON file to store within it.
 
-<p align="center">
- <img src="/img/create_container_1.jpg">
-</p>
+![cc1](img/create_container_1.JPG)
 
 Some JSON examples are included. If you want to add some custom data, just add the _.json_ file to the _json_ folder. In this example, we select _modern_family.json_.
 
-<p align="center">
- <img src="/img/create_container_2.jpg">
-</p>
+![cc2](img/create_container_2.JPG)
 
 Now we want to check the already stored data. Just select _Get data from a container_ at the menu and chose the desired existing container.
 
-<p align="center">
- <img src="/img/get_data_1.jpg">
-</p>
+![gd1](img/get_data_1.JPG)
 
 At this point, we want to change some data: the video format now is HD and let's add an additional subtitle language. So the changes, in JsonPath format, are:
 
@@ -155,12 +147,8 @@ At this point, we want to change some data: the video format now is HD and let's
 
 So let's update the container selecting _Update container data_:
 
-<p align="center">
- <img src="/img/update_container_1.jpg">
-</p>
+![uc1](img/update_container_1.JPG)
 
-<p align="center">
- <img src="/img/update_container_2.jpg">
-</p>
+![uc2](img/update_container_2.JPG)
 
 We can see that the container data has been correctly fixed.
