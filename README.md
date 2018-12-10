@@ -152,3 +152,8 @@ So let's update the container selecting _Update container data_:
 ![uc2](img/update_container_2.JPG)
 
 We can see that the container data has been correctly fixed.
+
+## Future improvement
+Every operation done at Ethereum's blockchain costs [_gas_](http://ethdocs.org/en/latest/contracts-and-transactions/account-types-gas-and-transactions.html#what-is-gas). Storing and changing data from JsonContainers save a lot of gas compared to storing the raw data. But if we store a large JSON object, or if we change a lot of container data, we can spend a undesirable quantity of gas, making the transaction impossible to succeed (out of gas error when gas cost is over gas limit).
+
+A posible solution is to [estimate the cost of the transaction to send](http://ethdocs.org/en/latest/contracts-and-transactions/account-types-gas-and-transactions.html#estimating-transaction-costs) and, if needed, split it into small transactions to be able to accomplish the operation. For example, instead of storing a large JSON object, we can split the operation into a initial transaction with few JSON attributes and, after that, make the rest of the additions in other transactions. Or if we have to change several attributes, we can make it by grouping those changes in small blocks, thanks to the JsonPath format.
