@@ -7,30 +7,18 @@ import "../node_modules/solidity-rlp/contracts/RLPReader.sol";
 
 contract JsonContainerFactory is Structs {
 
+    event ContainerCreated(string indexed name, address add);
+
     using RLPReader for bytes;
     using RLPReader for uint;
     using RLPReader for RLPReader.RLPItem;
 
     Container[] private containers_;
 
-    function createContainer(bytes memory _in, string _name) public {
-        RLPReader.RLPItem memory item = _in.toRlpItem();
-        RLPReader.RLPItem[] memory itemList = item.toList();
-
-        uint listLength = itemList.length;
-        PathValue[] memory data = new PathValue[](listLength);
-        for (uint i = 0; i < listLength; i++) {
-            PathValue memory pathValue = PathValue(
-                string(itemList[i].toList()[0].toBytes()),
-                string(itemList[i].toList()[1].toBytes()),
-                string(itemList[i].toList()[2].toBytes())
-            );
-            data[i] = pathValue;
-        }
-
+    function createContainer(string _name) public {
         JsonContainer container = new JsonContainer();
-        container.initialize(data);
         containers_.push(Container(address(container), _name));
+        emit ContainerCreated(_name, address(container));
     }
 
     function getContainers() public view returns (Container[]) {

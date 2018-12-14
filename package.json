@@ -32,6 +32,7 @@
   },
   "homepage": "https://github.com/bloomenio/json-warehouse#readme",
   "dependencies": {
+    "await-to-js": "^2.1.1",
     "bip39": "^2.5.0",
     "commander": "^2.15.1",
     "dotenv": "^6.0.0",
@@ -41,6 +42,7 @@
     "json-path-value": "0.0.1-beta8",
     "prettyjson": "^1.2.1",
     "rlp": "^2.1.0",
+    "scrypt": "^6.0.3",
     "solidity-rlp": "^1.1.0",
     "truffle": "^4.1.14",
     "truffle-hdwallet-provider": "0.0.6",

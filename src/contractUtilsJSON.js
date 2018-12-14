@@ -5,14 +5,17 @@ const HDWalletProvider = require("truffle-hdwallet-provider");
 const mnemonic = bip39.generateMnemonic();
 const fs = require('fs');
 const jsonPathLibrary = require('json-path-value');
+const to = require('await-to-js').to;
+
 const jsonPath = new jsonPathLibrary.JsonPath();
 const jsonContainerFactoryJSON = JSON.parse(fs.readFileSync('./build/contracts/JsonContainerFactory.json', 'utf8'));
 const jsonContainerAbi = JSON.parse(fs.readFileSync('./build/contracts/JsonContainer.json', 'utf8')).abi;
-const GAS = 100000000;
 const Web3 = require('web3');
 const RLP = require('rlp');
 const hdprovider = new HDWalletProvider(mnemonic, "http://" + process.env.DEVELOPMENT_HOST + ":" + process.env.DEVELOPMENT_PORT);
 const web3 = new Web3(hdprovider);
+const gasLimit = process.env.DEVELOPMENT_GAS_LIMIT;
+const GAS = gasLimit;
 const transactionObject = {
     from: hdprovider.getAddress(0),
     gas: GAS,
@@ -36,7 +39,37 @@ async function _createContainer(json, name) {
         pathValues.push(pathValue);
     }
     let encodedData = RLP.encode(pathValues);
-    await jsonContainerFactoryInstance.methods.createContainer(encodedData, name).send(transactionObject);
+    await jsonContainerFactoryInstance.methods.createContainer(name).send(transactionObject)
+        .then((tx) => {
+            console.log('Transaction sent.');
+            return checkTransaction(tx.transactionHash);
+        });
+    let events = await jsonContainerFactoryInstance.getPastEvents('ContainerCreated');
+    let address = events[events.length - 1].returnValues.add;
+    let jsonContainerInstance = new web3.eth.Contract(jsonContainerAbi, address);
+    let error, estimatedGas;
+    [error, estimatedGas] = await to(jsonContainerInstance.methods.initialize(encodedData).estimateGas());
+    if (estimatedGas >= gasLimit || error) {
+        let i = 0;
+        for (i = 0; i < jsonPathPairs.length; i++) {
+            let pathValue = [];
+            pathValue.push(jsonPathPairs[i].getPath());
+            pathValue.push(jsonPathPairs[i].getValue());
+            pathValue.push(jsonPathPairs[i].getType());
+            pathValues.push(pathValue);
+            encodedData = RLP.encode(pathValues);
+            console.log(jsonPathPairs[i].getPath());
+            await jsonContainerInstance.methods.initialize(encodedData).send(transactionObject)
+                .then((tx) => {
+                    console.log('Transaction sent.');
+                    return checkTransaction(tx.transactionHash);
+                });
+        }
+    } else if (error) {
+        console.log(error)
+    } else {
+        await jsonContainerInstance.methods.initialize(encodedData).send(transactionObject);
+    }
 }
 
 async function _get(address) {
@@ -61,6 +94,7 @@ async function _get(address) {
 async function _updateContainer(json, address) {
     let jsonContainerInstance = new web3.eth.Contract(jsonContainerAbi, address);
     let unmarshalledStorage = jsonPath.unMarshall(await _get(address));
+    console.log(unmarshalledStorage);
     let differences = jsonPath.compareJsonPath(unmarshalledStorage, json);
     let i;
     let changes = [];
@@ -79,6 +113,8 @@ async function _updateContainer(json, address) {
     }
     let encodedDataUpdate = RLP.encode(changes);
     await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject);
+    let estimatedGas = await jsonContainerInstance.methods.update(encodedDataUpdate).estimateGas();
+    console.log(estimatedGas);
 }
 
 module.exports = (function () {
@@ -90,3 +126,29 @@ module.exports = (function () {
         updateContainer: _updateContainer
     }
 });
+
+function checkTransaction(tx) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            web3.eth.getTransactionReceipt(tx,
+                function (err, status) {
+                    if (err) {
+                        console.log('KO');
+                        reject(err);
+                    } else if (!status) {
+                        console.log('Checking transaction ...');
+                        checkTransaction(tx);
+                    }
+                    else if (GAS == status.gasUsed) {
+                        //transaction error
+                        console.log('Out of gas.');
+                        reject();
+                    } else {
+                        console.log('Transaction mined.');
+                        resolve();
+                    }
+                }
+            );
+        }, 1000);
+    });
+}

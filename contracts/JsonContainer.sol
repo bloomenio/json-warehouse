@@ -20,10 +20,17 @@ contract JsonContainer is Structs {
         return data_;
     }
 
-    function initialize(PathValue[] _data) public {
-        uint dataLength = _data.length;
-        for (uint i = 0;i < dataLength; i++) {
-            PathValue memory pathValue = _data[i];
+    function initialize(bytes memory _in) public {
+        RLPReader.RLPItem memory item = _in.toRlpItem();
+        RLPReader.RLPItem[] memory itemList = item.toList();
+
+        uint listLength = itemList.length;
+        for (uint i = 0; i < listLength; i++) {
+            PathValue memory pathValue = PathValue(
+                string(itemList[i].toList()[0].toBytes()),
+                string(itemList[i].toList()[1].toBytes()),
+                string(itemList[i].toList()[2].toBytes())
+            );
             _addPath(pathValue.path, pathValue.value, pathValue.valueType);
         }
     }
