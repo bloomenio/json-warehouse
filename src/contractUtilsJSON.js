@@ -29,6 +29,16 @@ async function _getContainers() {
 }
 
 async function _createContainer(json, name) {
+    console.log('Container creation.');
+    await jsonContainerFactoryInstance.methods.createContainer(name).send(transactionObject)
+        .then((tx) => {
+            console.log('Transaction sent.');
+            return checkTransaction(tx.transactionHash);
+        });
+    let events = await jsonContainerFactoryInstance.getPastEvents('ContainerCreated');
+    let address = events[events.length - 1].returnValues.add;
+    let jsonContainerInstance = new web3.eth.Contract(jsonContainerAbi, address);
+
     let jsonPathPairs = jsonPath.marshall(json, "", []);
     let pathValues = [];
     for (i = 0; i < jsonPathPairs.length; i++) {
@@ -39,26 +49,20 @@ async function _createContainer(json, name) {
         pathValues.push(pathValue);
     }
     let encodedData = RLP.encode(pathValues);
-    await jsonContainerFactoryInstance.methods.createContainer(name).send(transactionObject)
-        .then((tx) => {
-            console.log('Transaction sent.');
-            return checkTransaction(tx.transactionHash);
-        });
-    let events = await jsonContainerFactoryInstance.getPastEvents('ContainerCreated');
-    let address = events[events.length - 1].returnValues.add;
-    let jsonContainerInstance = new web3.eth.Contract(jsonContainerAbi, address);
     let error, estimatedGas;
     [error, estimatedGas] = await to(jsonContainerInstance.methods.initialize(encodedData).estimateGas());
     if (estimatedGas >= gasLimit || error) {
-        let i = 0;
+        console.log('Bulk init NOT posible: out of gas');
+        let i;
         for (i = 0; i < jsonPathPairs.length; i++) {
+            let pathValues = [];
             let pathValue = [];
             pathValue.push(jsonPathPairs[i].getPath());
             pathValue.push(jsonPathPairs[i].getValue());
             pathValue.push(jsonPathPairs[i].getType());
             pathValues.push(pathValue);
             encodedData = RLP.encode(pathValues);
-            console.log(jsonPathPairs[i].getPath());
+            console.log('adding -> path: ' + jsonPathPairs[i].getPath() + ', value: ' + jsonPathPairs[i].getValue());
             await jsonContainerInstance.methods.initialize(encodedData).send(transactionObject)
                 .then((tx) => {
                     console.log('Transaction sent.');
@@ -66,9 +70,14 @@ async function _createContainer(json, name) {
                 });
         }
     } else if (error) {
-        console.log(error)
+        console.log(error);
     } else {
-        await jsonContainerInstance.methods.initialize(encodedData).send(transactionObject);
+        console.log('Bulk init posible.');
+        await jsonContainerInstance.methods.initialize(encodedData).send(transactionObject)
+            .then((tx) => {
+                console.log('Transaction sent.');
+                return checkTransaction(tx.transactionHash);
+            });
     }
 }
 
@@ -94,8 +103,11 @@ async function _get(address) {
 async function _updateContainer(json, address) {
     let jsonContainerInstance = new web3.eth.Contract(jsonContainerAbi, address);
     let unmarshalledStorage = jsonPath.unMarshall(await _get(address));
-    console.log(unmarshalledStorage);
     let differences = jsonPath.compareJsonPath(unmarshalledStorage, json);
+    if (differences.length == 0) {
+        console.log('No changes detected.');
+        return;
+    }
     let i;
     let changes = [];
     for (i = 0; i < differences.length; i++) {
@@ -112,9 +124,42 @@ async function _updateContainer(json, address) {
         changes.push(pathValueDiff);
     }
     let encodedDataUpdate = RLP.encode(changes);
-    await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject);
-    let estimatedGas = await jsonContainerInstance.methods.update(encodedDataUpdate).estimateGas();
-    console.log(estimatedGas);
+    let error, estimatedGas;
+    [error, estimatedGas] = await to(jsonContainerInstance.methods.update(encodedDataUpdate).estimateGas());
+    if (estimatedGas >= gasLimit || error) {
+        console.log('Bulk update NOT posible: out of gas');
+        let i;
+        for (i = 0; i < differences.length; i++) {
+            let changes = [];
+            let pathValueDiff = [];
+            let difference = differences[i];
+            pathValueDiff.push(difference.path);
+            if (difference.type == jsonPath.TYPE_STRING) {
+                pathValueDiff.push(difference.value);
+            } else {
+                pathValueDiff.push(JSON.stringify(difference.value));
+            }
+            pathValueDiff.push(difference.type);
+            pathValueDiff.push(difference.diff);
+            changes.push(pathValueDiff);
+            let encodedDataUpdate = RLP.encode(changes);
+            console.log(difference.diff + ': ' + difference.path);
+            await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject)
+            .then((tx) => {
+                console.log('Transaction sent.');
+                return checkTransaction(tx.transactionHash);
+            });
+        }
+    } else if (error) {
+        console.log(error);
+    } else {
+        console.log('Bulk update posible.');
+        await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject)
+            .then((tx) => {
+                console.log('Transaction sent.');
+                return checkTransaction(tx.transactionHash);
+            });
+    }
 }
 
 module.exports = (function () {

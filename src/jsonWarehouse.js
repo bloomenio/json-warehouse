@@ -80,6 +80,26 @@ async function update() {
     console.log('Container updated.');
 }
 
+async function mainMenu() {
+    let menuOptions = [
+        { name: "Create a new container", value: newContainer },
+        { name: "Get data from a container", value: getData },
+        { name: "Update container data", value: update },
+        { name: "Exit", value: 0 }
+    ];
+    let questions = [
+        { type: "list", name: "menu", message: "What do you want to do?", choices: menuOptions }
+    ];
+    let answer = await inquirer.prompt(questions);
+    if (answer.menu == 0) {
+        return;
+    } else {
+        await answer.menu();
+        mainMenu();
+    }
+
+}
+
 program
     .version(version, '-v --version');
 
@@ -124,15 +144,7 @@ figlet.text('JSON Warehouse', {
     console.log(data);
     program.parse(process.argv);
     if (program.args.length == 0) {
-        let menuOptions = [
-            { name: "Create a new container", value: newContainer },
-            { name: "Get data from a container", value: getData },
-            { name: "Update container data", value: update }
-        ];
-        let questions = [
-            { type: "list", name: "menu", message: "What do you want to do?", choices: menuOptions }
-        ];
-        let answer = await inquirer.prompt(questions);
-        answer.menu();
+        mainMenu();
     }
+
 });
