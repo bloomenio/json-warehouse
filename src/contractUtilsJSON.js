@@ -54,15 +54,10 @@ async function _createContainer(json, name) {
     if (estimatedGas >= gasLimit || error) {
         console.log('Bulk init NOT posible: out of gas');
         let i;
-        for (i = 0; i < jsonPathPairs.length; i++) {
-            let pathValues = [];
-            let pathValue = [];
-            pathValue.push(jsonPathPairs[i].getPath());
-            pathValue.push(jsonPathPairs[i].getValue());
-            pathValue.push(jsonPathPairs[i].getType());
-            pathValues.push(pathValue);
-            encodedData = RLP.encode(pathValues);
-            console.log('adding -> path: ' + jsonPathPairs[i].getPath() + ', value: ' + jsonPathPairs[i].getValue());
+        for (i = 0; i < pathValues.length; i++) {
+            let pathValue = pathValues[i];
+            encodedData = RLP.encode([pathValue]);
+            console.log('adding -> path: ' + pathValue[0] + ', value: ' + pathValue[1]);
             await jsonContainerInstance.methods.initialize(encodedData).send(transactionObject)
                 .then((tx) => {
                     console.log('Transaction sent.');
@@ -129,26 +124,16 @@ async function _updateContainer(json, address) {
     if (estimatedGas >= gasLimit || error) {
         console.log('Bulk update NOT posible: out of gas');
         let i;
-        for (i = 0; i < differences.length; i++) {
-            let changes = [];
-            let pathValueDiff = [];
-            let difference = differences[i];
-            pathValueDiff.push(difference.path);
-            if (difference.type == jsonPath.TYPE_STRING) {
-                pathValueDiff.push(difference.value);
-            } else {
-                pathValueDiff.push(JSON.stringify(difference.value));
-            }
-            pathValueDiff.push(difference.type);
-            pathValueDiff.push(difference.diff);
-            changes.push(pathValueDiff);
-            let encodedDataUpdate = RLP.encode(changes);
-            console.log(difference.diff + ': ' + difference.path);
+        for (i = 0; i < changes.length; i++) {
+            let difference = changes[i];
+            let encodedDataUpdate = RLP.encode([difference]);
+            let diff = getDiff(difference[3]);
+            console.log(diff + ': ' + difference[0]);
             await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject)
-            .then((tx) => {
-                console.log('Transaction sent.');
-                return checkTransaction(tx.transactionHash);
-            });
+                .then((tx) => {
+                    console.log('Transaction sent.');
+                    return checkTransaction(tx.transactionHash);
+                });
         }
     } else if (error) {
         console.log(error);
@@ -159,6 +144,16 @@ async function _updateContainer(json, address) {
                 console.log('Transaction sent.');
                 return checkTransaction(tx.transactionHash);
             });
+    }
+}
+
+function getDiff(differenceNumber) {
+    if (differenceNumber == 0) {
+        return 'Adding';
+    } else if (differenceNumber == 1) {
+        return 'Deleting';
+    } else {
+        return 'Modifying';
     }
 }
 
