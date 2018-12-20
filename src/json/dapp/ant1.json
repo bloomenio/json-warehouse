@@ -1,0 +1,18 @@
+{
+    "id": 0,
+    "theme": "bloomen-ant1-theme",
+    "background": "assets/instances/img_instance_bg_ant1.png",
+    "logo": "assets/instances/img_instance_logo_ant1.png",
+    "home": {
+      "img": "assets/home/img_ant1.png",
+      "title": "Antenna",
+      "subtitle": "Cyprus"
+    },
+    "login": {
+      "title": "Antenna instance"
+    },
+    "instance": {
+      "img": "assets/instances/img_program_ant1.png",
+      "prepaidCard": "assets/instances/img_prepaid_card_qr_ant1.png"
+    }
+}

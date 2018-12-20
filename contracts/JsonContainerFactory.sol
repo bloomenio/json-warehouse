@@ -4,16 +4,17 @@ pragma experimental ABIEncoderV2;
 import "./lib/Structs.sol";
 import "./JsonContainer.sol";
 import "../node_modules/solidity-rlp/contracts/RLPReader.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract JsonContainerFactory is Structs {
+contract JsonContainerFactory is Structs, Ownable {
 
     using RLPReader for bytes;
     using RLPReader for uint;
     using RLPReader for RLPReader.RLPItem;
-
+    
     Container[] private containers_;
 
-    function createContainer(bytes memory _in, string _name) public {
+    function createContainer(bytes memory _in, string _name) onlyOwner public {
         RLPReader.RLPItem memory item = _in.toRlpItem();
         RLPReader.RLPItem[] memory itemList = item.toList();
 
@@ -30,6 +31,7 @@ contract JsonContainerFactory is Structs {
 
         JsonContainer container = new JsonContainer();
         container.initialize(data);
+        container.transferOwnership(msg.sender);
         containers_.push(Container(address(container), _name));
     }
 
@@ -37,4 +39,5 @@ contract JsonContainerFactory is Structs {
         return containers_;
     }
 
+    
 }

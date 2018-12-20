@@ -4,8 +4,9 @@ pragma experimental ABIEncoderV2;
 import "./lib/Strings.sol";
 import "./lib/Structs.sol";
 import "../node_modules/solidity-rlp/contracts/RLPReader.sol";
+import "../node_modules/openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-contract JsonContainer is Structs {
+contract JsonContainer is Structs, Ownable {
 
     using Strings for *;
     using RLPReader for bytes;
@@ -20,7 +21,7 @@ contract JsonContainer is Structs {
         return data_;
     }
 
-    function initialize(PathValue[] _data) public {
+    function initialize(PathValue[] _data) onlyOwner public {
         uint dataLength = _data.length;
         for (uint i = 0;i < dataLength; i++) {
             PathValue memory pathValue = _data[i];
@@ -28,7 +29,7 @@ contract JsonContainer is Structs {
         }
     }
 
-    function update(bytes memory _in) public {
+    function update(bytes memory _in) onlyOwner public {
         RLPReader.RLPItem memory item = _in.toRlpItem();
         RLPReader.RLPItem[] memory itemList = item.toList();
         uint listLength = itemList.length;
