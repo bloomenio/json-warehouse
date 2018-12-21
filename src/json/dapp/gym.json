@@ -1,0 +1,18 @@
+{
+  "id": "1",
+  "theme": "bloomen-demo-theme",
+  "background": "assets/instances/img_instance_bg_demo.png",
+  "logo": "assets/instances/img_instance_logo_demo.png",
+  "home": {
+    "img": "assets/home/img_demo.png",
+    "title": "GYM",
+    "subtitle": "Try a complete experience"
+  },
+  "login": {
+    "title": "GYM instance"
+  },
+  "instance": {
+    "img": "assets/instances/img_program_demo.png",
+    "prepaidCard": "assets/instances/img_prepaid_card_qr_demo.png"
+  }
+}
