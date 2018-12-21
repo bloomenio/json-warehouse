@@ -37,7 +37,7 @@ async function getData() {
     let containersMetadata = [];
     let i;
     for (i = 0; i < containers.length; i++) {
-        containersMetadata.push({ name: containers[i].name, value: containers[i].add });
+        containersMetadata.push({ name: containers[i].name + " "+ containers[i].addr, value: containers[i].addr });
     }
     if (containersMetadata.length == 0) {
         console.log("There are no containers.");
@@ -48,7 +48,7 @@ async function getData() {
     ];
     console.log('Get data from a container');
     let answer = await inquirer.prompt(questions);
-    console.log(prettyJson.render(jsonPath.unMarshall(await utils().get(answer.container)), jsonPrintOptions));
+    console.log(answer.container+'\n',prettyJson.render(jsonPath.unMarshall(await utils().get(answer.container)), jsonPrintOptions));
 }
 
 async function update() {
@@ -56,7 +56,7 @@ async function update() {
     let containersMetadata = [];
     let i;
     for (i = 0; i < containers.length; i++) {
-        containersMetadata.push({ name: containers[i].name, value: containers[i].add });
+        containersMetadata.push({ name: containers[i].name + " "+ containers[i].addr, value: containers[i].addr });
     }
     if (containersMetadata.length == 0) {
         console.log("There are no containers.");
@@ -76,7 +76,7 @@ async function update() {
     let answerFile = await inquirer.prompt(questions);
     let json = JSON.parse(fs.readFileSync('./src/json/' + answer.folder + '/' + answerFile.file, 'utf8'));
     await utils().updateContainer(json, answer.container);
-    console.log('Result:\n' + prettyJson.render(jsonPath.unMarshall(await utils().get(answer.container)), jsonPrintOptions));
+    console.log(answer.container+'\n','Result:\n' + prettyJson.render(jsonPath.unMarshall(await utils().get(answer.container)), jsonPrintOptions));
     console.log('Container updated.');
 }
 

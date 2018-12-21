@@ -9,7 +9,7 @@ pragma solidity 0.4.24;
     }
 
     struct Container {
-      address add;
+      address addr;
       string name;
     }
     

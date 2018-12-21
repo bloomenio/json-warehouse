@@ -8,17 +8,36 @@ const jsonPathLibrary = require('json-path-value');
 const jsonPath = new jsonPathLibrary.JsonPath();
 const jsonContainerFactoryJSON = JSON.parse(fs.readFileSync('./build/contracts/JsonContainerFactory.json', 'utf8'));
 const jsonContainerAbi = JSON.parse(fs.readFileSync('./build/contracts/JsonContainer.json', 'utf8')).abi;
-const GAS = 100000000;
+const GAS = 9999999999;
 const Web3 = require('web3');
 const RLP = require('rlp');
+
+
+/*
 const hdprovider = new HDWalletProvider(mnemonic, "http://" + process.env.DEVELOPMENT_HOST + ":" + process.env.DEVELOPMENT_PORT);
 const web3 = new Web3(hdprovider);
+*/
+
+Web3.providers.HttpProvider.prototype.sendAsync = Web3.providers.HttpProvider.prototype.send;
+const _user = process.env.ALASTRIA_USER;
+const _password = process.env.ALASTRIA_PASSWORD;
+const _auth = 'Basic ' + Buffer.from(_user + ':' + _password).toString('base64');
+const _headers = [{name: 'Authorization', value: _auth}];
+const _provider = new Web3.providers.HttpProvider(process.env.ALASTRIA_URL, {timeout: 0, headers: _headers });
+
+var hdprovider =new HDWalletProvider(process.env.ALASTRIA_MNEMONIC, process.env.ALASTRIA_URL);   
+hdprovider.engine.stop();
+hdprovider.engine._providers[2].provider=_provider;
+hdprovider.engine.start();
+
+const web3 = new Web3(hdprovider);
+
 const transactionObject = {
     from: hdprovider.getAddress(0),
     gas: GAS,
     gasPrice: 0
 };
-const jsonContainerFactoryInstance = new web3.eth.Contract(jsonContainerFactoryJSON.abi, jsonContainerFactoryJSON.networks[process.env.DEVELOPMENT_NETWORKID].address);
+const jsonContainerFactoryInstance = new web3.eth.Contract(jsonContainerFactoryJSON.abi, jsonContainerFactoryJSON.networks[process.env.ALASTRIA_NETWORKID].address);
 
 async function _getContainers() {
     let data = await jsonContainerFactoryInstance.methods.getContainers().call(transactionObject);
@@ -36,7 +55,10 @@ async function _createContainer(json, name) {
         pathValues.push(pathValue);
     }
     let encodedData = RLP.encode(pathValues);
-    await jsonContainerFactoryInstance.methods.createContainer(encodedData, name).send(transactionObject);
+    await jsonContainerFactoryInstance.methods.createContainer(encodedData, name).send(transactionObject).then((tx) => {
+        console.log('Transaction sent.',tx.transactionHash);
+        return checkTransaction(tx.transactionHash);
+    },(err)=> console.log(err));
 }
 
 async function _get(address) {
@@ -78,7 +100,36 @@ async function _updateContainer(json, address) {
         changes.push(pathValueDiff);
     }
     let encodedDataUpdate = RLP.encode(changes);
-    await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject);
+    await jsonContainerInstance.methods.update(encodedDataUpdate).send(transactionObject).then((tx) => {
+        console.log('Transaction sent.',tx.transactionHash);
+        return checkTransaction(tx.transactionHash);
+    },(err)=> console.log(err));
+}
+
+function checkTransaction(tx) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            web3.eth.getTransactionReceipt(tx,
+                function (err, status) {
+                    if (err) {
+                        console.log('KO');
+                        reject(err);
+                    } else if (!status) {
+                        console.log('Checking transaction ...');
+                        checkTransaction(tx);
+                    }
+                    else if (GAS == status.gasUsed) {
+                        //transaction error
+                        console.log('Error','Out of gas.');
+                        resolve();
+                    } else {
+                        console.log('Transaction mined.');
+                        resolve();
+                    }
+                }
+            );
+        }, 1000);
+    });
 }
 
 module.exports = (function () {
