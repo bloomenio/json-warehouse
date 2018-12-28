@@ -9,10 +9,36 @@
     "subtitle": "Try a complete experience"
   },
   "login": {
-    "title": "GYM instance"
+    "title": "GYM instance2"
   },
   "instance": {
     "img": "assets/instances/img_program_demo.png",
     "prepaidCard": "assets/instances/img_prepaid_card_qr_demo.png"
-  }
+  },
+  "laf":{
+    "theme": "bloomen-ant1-theme",
+    "backgroundImage": "image1",
+    "backgroundOverlayColor": "#f4b942",
+    "logo": "https://cdn.svgporn.com/logos/6px.svg"
+  },
+  "news": [
+    { "img" : "https://ant1media.azureedge.net/imgHandler/380/4dc1c6b2-ecce-446f-bde6-a0bffb6ecc8f.jpg",
+      "title": "News #1",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed congue velit mi, vitae sodales ligula fermentum ut. Donec vel ornare nibh. Duis scelerisque suscipit arcu, sit amet malesuada orci feugiat sit amet. Vestibulum at efficitur arcu, et tincidunt nunc. Maecenas non ornare lacus, ac egestas magna. In eu mattis neque, at consectetur nunc. In vehicula nec leo semper fringilla. Proin magna urna, suscipit eu maximus non, feugiat ut massa. Nunc vehicula ligula et velit iaculis sodales. Proin at urna nec libero gravida congue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla faucibus tincidunt ante, convallis aliquet purus rhoncus sit amet. Duis sit amet volutpat risus. Donec et orci nisi. Nullam vulputate lobortis velit ut congue. Maecenas felis lacus, elementum efficitur vehicula quis, pulvinar a elit. Duis gravida arcu non tortor scelerisque, eu cursus purus viverra. Nulla erat lectus, consectetur nec pharetra ornare, imperdiet sit amet enim. Maecenas vehicula mattis libero vitae euismod. Etiam orci mi, venenatis ac enim id, posuere varius velit. Etiam rutrum urna a ante luctus, a efficitur leo rhoncus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer non euismod nisi. Sed id enim diam. Vestibulum ac sollicitudin metus, vitae feugiat orci. Cras eget justo urna.",
+      "payment" : {
+        "asset": "asse1",
+        "price": 110,
+        "schema": "schema1"
+      }
+    },
+    { "img" : "https://ant1media.azureedge.net/imgHandler/380/1a6495eb-36a0-4c56-8c95-1a097572eab6.jpg",
+      "title": "News #2",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed congue velit mi, vitae sodales ligula fermentum ut. Donec vel ornare nibh. Duis scelerisque suscipit arcu, sit amet malesuada orci feugiat sit amet. Vestibulum at efficitur arcu, et tincidunt nunc. Maecenas non ornare lacus, ac egestas magna. In eu mattis neque, at consectetur nunc. In vehicula nec leo semper fringilla. Proin magna urna, suscipit eu maximus non, feugiat ut massa. Nunc vehicula ligula et velit iaculis sodales. Proin at urna nec libero gravida congue. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla faucibus tincidunt ante, convallis aliquet purus rhoncus sit amet. Duis sit amet volutpat risus. Donec et orci nisi. Nullam vulputate lobortis velit ut congue. Maecenas felis lacus, elementum efficitur vehicula quis, pulvinar a elit. Duis gravida arcu non tortor scelerisque, eu cursus purus viverra. Nulla erat lectus, consectetur nec pharetra ornare, imperdiet sit amet enim. Maecenas vehicula mattis libero vitae euismod. Etiam orci mi, venenatis ac enim id, posuere varius velit. Etiam rutrum urna a ante luctus, a efficitur leo rhoncus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer non euismod nisi. Sed id enim diam. Vestibulum ac sollicitudin metus, vitae feugiat orci. Cras eget justo urna.",
+      "payment" : {
+        "asset": "asse2",
+        "price": 130,
+        "schema": "schema3"
+      }
+    }
+  ]
 }
